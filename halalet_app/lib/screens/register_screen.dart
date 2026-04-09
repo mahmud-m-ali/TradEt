@@ -83,7 +83,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         const SizedBox(height: 4),
                         const Text(
-                          'Join ሃላልኢት to start trading / ይመዝገቡ',
+                          'Join ትሬድኢት to start trading',
                           style: TextStyle(
                               fontSize: 14, color: HalalEtTheme.textSecondary),
                         ),

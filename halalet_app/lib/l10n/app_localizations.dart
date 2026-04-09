@@ -44,7 +44,7 @@ class AppLocalizations {
   String get langCode => locale.languageCode;
 
   // ─── Common ──────────────────────────────────────
-  String get appName => _t({'en': 'TradEt', 'am': 'ትሬዴት', 'ti': 'ትሬዴት', 'om': 'TradEt', 'so': 'TradEt', 'gur': 'ትሬዴት'});
+  String get appName => _t({'en': 'TradEt', 'am': 'ትሬድኢት', 'ti': 'ትሬድኢት', 'om': 'TradEt', 'so': 'TradEt', 'gur': 'ትሬድኢት'});
   String get retry => _t({'en': 'Retry', 'am': 'እንደገና ሞክር', 'ti': 'ደጊምካ ፈትን', 'om': "Irra deebi'i", 'so': 'Ku celi', 'gur': 'ዳግም ሞክር'});
   String get cancel => _t({'en': 'Cancel', 'am': 'ሰርዝ', 'ti': 'ሰርዝ', 'om': 'Haqi', 'so': 'Jooji', 'gur': 'ተው'});
   String get save => _t({'en': 'Save', 'am': 'አስቀምጥ', 'ti': 'ዓቅብ', 'om': "Olkaa'i", 'so': 'Kaydi', 'gur': 'አኖር'});

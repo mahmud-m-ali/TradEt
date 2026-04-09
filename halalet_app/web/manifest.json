@@ -1,11 +1,11 @@
 {
-    "name": "HalalEt",
-    "short_name": "HalalEt",
+    "name": "TradEt",
+    "short_name": "TradEt",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "HalalEt — Sharia & Ethiopian Trade Compliant Trading Platform",
+    "background_color": "#0F4C30",
+    "theme_color": "#1B8A5A",
+    "description": "TradEt — Sharia & Ethiopian Trade Compliant Trading Platform",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

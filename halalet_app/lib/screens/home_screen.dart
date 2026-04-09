@@ -292,7 +292,7 @@ class _WebSidebar extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'by Amber • ትሬዴት',
+                          'by Amber • ትሬድኢት',
                           style: TextStyle(
                             fontSize: 11,
                             color: HalalEtTheme.textMuted,

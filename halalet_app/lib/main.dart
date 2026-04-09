@@ -21,11 +21,11 @@ void main() {
       statusBarIconBrightness: Brightness.dark,
     ),
   );
-  runApp(const HalalEtApp());
+  runApp(const TradEtApp());
 }
 
-class HalalEtApp extends StatelessWidget {
-  const HalalEtApp({super.key});
+class TradEtApp extends StatelessWidget {
+  const TradEtApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +137,7 @@ class _AuthGateState extends State<AuthGate> with SingleTickerProviderStateMixin
               ),
               const SizedBox(height: 28),
               const Text(
-                'ሃላልኢት',
+                'ትሬድኢት',
                 style: TextStyle(
                   fontSize: 36,
                   fontWeight: FontWeight.w800,
