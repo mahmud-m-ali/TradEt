@@ -134,12 +134,12 @@ class DashboardScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: _PortfolioCard(provider: provider, fmt: fmt),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: _CashBalanceCard(
                     value: '${fmt.format(provider.availableCashBalance)} ETB',
                     subLabel: provider.reservedForOrders > 0
@@ -289,7 +289,7 @@ class DashboardScreen extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Expanded(
-            flex: 2,
+            flex: 3,
             child: _AllocationCard(provider: provider, fmt: fmt),
           ),
           const SizedBox(width: 14),
