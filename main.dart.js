@@ -101391,13 +101391,13 @@ s.push(B.hA)
 if(m)s.push(new A.r6(A.a9(A.b([A.as(o.Zw(b,c),1),B.ja,A.as(o.Zx(b,c),1)],r),B.A,B.f,B.e,0),n))
 else B.b.R(s,A.b([o.Zw(b,c),B.ae,o.Zx(b,c)],r))
 return A.kV(s,B.tO,n,B.O,!1)},
-Ue(a,b){var s,r,q=null,p="Assalamu Alaikum",o=t.N
-o=b.c7(A.a2(["en",p,"am","\u12a0\u1235\u1230\u120b\u1219 \u12d3\u1208\u12ed\u12a9\u121d","ti","\u12a3\u1235\u1230\u120b\u1219 \u12d3\u1208\u12ed\u12a9\u121d","om",p,"so","Assalamu Calaykum","gur","\u12a0\u1235\u1230\u120b\u1219 \u12d3\u1208\u12ed\u12a9\u121d"],o,o))
+Ue(a,b){var s,r,q=null,p=t.N
+p=b.c7(A.a2(["en","Hello","am","\u1230\u120b\u121d","ti","\u1230\u120b\u121d","om","Akkam","so","Salaan","gur","\u1230\u120b\u121d"],p,p))
 s=t.p
-o=A.b([A.z(o+(a.d!=null?",":""),q,q,q,q,B.qi,q,q)],s)
+p=A.b([A.z(p+(a.d!=null?",":""),q,q,q,q,B.qi,q,q)],s)
 r=a.d
-if(r!=null)o.push(A.z(B.b.gad(r.c.split(" ")),q,q,q,q,B.ajz,q,q))
-return A.a9(A.b([A.as(A.al(o,B.A,B.f,B.e),1),A.U(q,B.v7,B.h,q,q,new A.R(q,q,q,A.T(14),q,B.h2,B.l),q,44,q,q,q,q,q,44)],s),B.k,B.f,B.e,0)},
+if(r!=null)p.push(A.z(B.b.gad(r.c.split(" ")),q,q,q,q,B.ajz,q,q))
+return A.a9(A.b([A.as(A.al(p,B.A,B.f,B.e),1),A.U(q,B.v7,B.h,q,q,new A.R(q,q,q,A.T(14),q,B.h2,B.l),q,44,q,q,q,q,q,44)],s),B.k,B.f,B.e,0)},
 aln(a,b,c,d,e){var s,r,q,p=d.gNP(),o=J.hs(b.w,new A.ads()).gG(0)
 p=A.as(A.pA(B.aK,B.e5,p,new A.adt(e),""+o),1)
 o=d.gN7()
