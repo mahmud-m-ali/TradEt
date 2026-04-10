@@ -10,6 +10,8 @@ import '../widgets/price_change.dart';
 import '../widgets/candlestick_chart.dart';
 import '../widgets/responsive_layout.dart';
 import 'alerts_screen.dart';
+import 'home_screen.dart';
+import 'login_screen.dart';
 
 class TradeScreen extends StatefulWidget {
   final Asset asset;
@@ -74,13 +76,10 @@ class _TradeScreenState extends State<TradeScreen> {
       return;
     }
 
-    final confirmed = await showModalBottomSheet<bool>(
+    final confirmed = await showResponsiveSheet<bool>(
       context: context,
       backgroundColor: HalalEtTheme.surfaceLight,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => _ConfirmSheet(
+      builder: (ctx, isDialog) => _ConfirmSheet(
         isBuy: _isBuy,
         asset: widget.asset,
         qty: qty,
@@ -88,6 +87,7 @@ class _TradeScreenState extends State<TradeScreen> {
         total: _total,
         fee: _fee,
         fmt: _fmt,
+        isDialog: isDialog,
       ),
     );
 
@@ -129,77 +129,97 @@ class _TradeScreenState extends State<TradeScreen> {
     final asset = widget.asset;
     final wide = isWideScreen(context);
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(gradient: HalalEtTheme.bgGradient),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // App bar
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: wide ? 24 : 8, vertical: 4),
-                child: Row(
-                  children: [
+    final mainContent = Container(
+      decoration: BoxDecoration(gradient: HalalEtTheme.bgGradient),
+      child: SafeArea(
+        child: Column(
+          children: [
+            // Top bar
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: wide ? 24 : 8, vertical: 4),
+              child: Row(
+                children: [
+                  if (!wide)
                     IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new,
-                          size: 20, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.white),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    const SizedBox(width: 4),
-                    Text(asset.symbol,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 18,
-                            color: Colors.white)),
-                    const SizedBox(width: 8),
-                    ShariaBadge(
-                        isCompliant: asset.isShariaCompliant, compact: true),
-                    const Spacer(),
-                    if (asset.isEcxListed) const EcxBadge(),
-                    Consumer<AppProvider>(
-                      builder: (ctx, prov, _) {
-                        final inWatchlist = prov.watchlist.any((a) => a.id == widget.asset.id);
-                        return Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: Icon(
-                                inWatchlist ? Icons.star_rounded : Icons.star_outline_rounded,
-                                color: inWatchlist ? const Color(0xFFFBBF24) : HalalEtTheme.textMuted,
-                              ),
-                              onPressed: () async {
-                                if (inWatchlist) {
-                                  await prov.removeFromWatchlist(widget.asset.id);
-                                } else {
-                                  await prov.addToWatchlist(widget.asset.id);
-                                }
-                              },
+                  if (!wide) const SizedBox(width: 4),
+                  Text(asset.symbol,
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Colors.white)),
+                  const SizedBox(width: 8),
+                  ShariaBadge(isCompliant: asset.isShariaCompliant, compact: true),
+                  const Spacer(),
+                  if (asset.isEcxListed) const EcxBadge(),
+                  Consumer<AppProvider>(
+                    builder: (ctx, prov, _) {
+                      final inWatchlist = prov.watchlist.any((a) => a.id == widget.asset.id);
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              inWatchlist ? Icons.star_rounded : Icons.star_outline_rounded,
+                              color: inWatchlist ? const Color(0xFFFBBF24) : const Color(0xFF8BAF97),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.notifications_outlined, color: HalalEtTheme.textMuted),
-                              onPressed: () => Navigator.of(ctx).push(
+                            onPressed: () async {
+                              if (inWatchlist) {
+                                await prov.removeFromWatchlist(widget.asset.id);
+                              } else {
+                                await prov.addToWatchlist(widget.asset.id);
+                              }
+                            },
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.notifications_outlined, color: Color(0xFF8BAF97)),
+                            onPressed: () => Navigator.of(ctx).push(
                                 MaterialPageRoute(builder: (_) => const AlertsScreen())),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
               ),
-
-              // Content
-              Expanded(
-                child: wide
-                    ? _buildWebLayout(asset)
-                    : _buildMobileLayout(asset),
-              ),
-            ],
-          ),
+            ),
+            Expanded(
+              child: wide ? _buildWebLayout(asset) : _buildMobileLayout(asset),
+            ),
+          ],
         ),
       ),
     );
+
+    if (wide) {
+      return Scaffold(
+        body: Row(
+          children: [
+            Consumer<AppProvider>(
+              builder: (context, provider, _) => AppWebSidebar(
+                currentIndex: -1,
+                onTap: (i) {
+                  Navigator.of(context).pop();
+                  provider.navigateGlobal(i);
+                },
+                onLogout: () async {
+                  await provider.logout();
+                  if (mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
+                },
+              ),
+            ),
+            Container(width: 1, color: const Color(0xFF2D5A3D)),
+            Expanded(child: mainContent),
+          ],
+        ),
+      );
+    }
+
+    return Scaffold(body: mainContent);
   }
 
   // ─── Mobile layout (unchanged) ───
@@ -891,6 +911,7 @@ class _ConfirmSheet extends StatelessWidget {
   final double total;
   final double fee;
   final NumberFormat fmt;
+  final bool isDialog;
 
   const _ConfirmSheet({
     required this.isBuy,
@@ -900,6 +921,7 @@ class _ConfirmSheet extends StatelessWidget {
     required this.total,
     required this.fee,
     required this.fmt,
+    this.isDialog = false,
   });
 
   @override
@@ -909,18 +931,35 @@ class _ConfirmSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                  color: HalalEtTheme.divider,
-                  borderRadius: BorderRadius.circular(2))),
-          const SizedBox(height: 20),
-          Text(isBuy ? AppLocalizations.of(context).confirmBuy : AppLocalizations.of(context).confirmSell,
+          if (!isDialog)
+            Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: HalalEtTheme.divider,
+                    borderRadius: BorderRadius.circular(2))),
+          if (isDialog)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  isBuy ? AppLocalizations.of(context).confirmBuy : AppLocalizations.of(context).confirmSell,
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white54),
+                  onPressed: () => Navigator.pop(context, false),
+                ),
+              ],
+            )
+          else ...[
+            const SizedBox(height: 20),
+            Text(isBuy ? AppLocalizations.of(context).confirmBuy : AppLocalizations.of(context).confirmSell,
               style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.white)),
+          ],
           const SizedBox(height: 20),
           _row('Asset', asset.symbol),
           _row('Type', isBuy ? AppLocalizations.of(context).buy : AppLocalizations.of(context).sell),

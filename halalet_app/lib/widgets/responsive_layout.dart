@@ -42,3 +42,35 @@ class WebContentWrapper extends StatelessWidget {
     );
   }
 }
+
+/// Shows a bottom sheet on mobile, centered dialog on desktop.
+Future<T?> showResponsiveSheet<T>({
+  required BuildContext context,
+  required Widget Function(BuildContext ctx, bool isDialog) builder,
+  Color backgroundColor = const Color(0xFF1A3D2B),
+  bool isScrollControlled = true,
+}) {
+  if (isWideScreen(context)) {
+    return showDialog<T>(
+      context: context,
+      barrierColor: Colors.black54,
+      builder: (ctx) => Dialog(
+        backgroundColor: backgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480, maxHeight: 700),
+          child: SingleChildScrollView(child: builder(ctx, true)),
+        ),
+      ),
+    );
+  }
+  return showModalBottomSheet<T>(
+    context: context,
+    backgroundColor: backgroundColor,
+    isScrollControlled: isScrollControlled,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
+    builder: (ctx) => builder(ctx, false),
+  );
+}

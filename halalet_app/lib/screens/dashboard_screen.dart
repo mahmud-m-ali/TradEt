@@ -16,6 +16,8 @@ import 'orders_screen.dart';
 import 'zakat_screen.dart';
 import 'converter_screen.dart';
 import 'transactions_screen.dart';
+import 'home_screen.dart';
+import 'login_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   final void Function(int index)? onNavigateTo;
@@ -1401,6 +1403,35 @@ class _WrappedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final wide = isWideScreen(context);
+    if (wide) {
+      return Scaffold(
+        body: Row(
+          children: [
+            Consumer<AppProvider>(
+              builder: (context, provider, _) => AppWebSidebar(
+                currentIndex: -1,
+                onTap: (i) {
+                  Navigator.of(context).pop();
+                  provider.navigateGlobal(i);
+                },
+                onLogout: () async {
+                  await provider.logout();
+                  if (context.mounted) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
+                },
+              ),
+            ),
+            Container(width: 1, color: const Color(0xFF2D5A3D)),
+            Expanded(child: child),
+          ],
+        ),
+      );
+    }
     return Scaffold(
       backgroundColor: const Color(0xFF0D3B20),
       appBar: AppBar(
@@ -1460,67 +1491,80 @@ class _QuickAccessCard extends StatelessWidget {
 // ─── Deposit / Withdraw sheets (top-level so any widget can call them) ───
 
 void _showDepositSheet(BuildContext context) {
-    final controller = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: HalalEtTheme.cardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+  final controller = TextEditingController();
+  showResponsiveSheet(
+    context: context,
+    backgroundColor: const Color(0xFF1A3D2B),
+    builder: (ctx, isDialog) => Padding(
+      padding: EdgeInsets.fromLTRB(24, isDialog ? 20 : 24, 24,
+          isDialog ? 24 : MediaQuery.of(ctx).viewInsets.bottom + 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (!isDialog)
             Center(
               child: Container(width: 40, height: 4,
-                  decoration: BoxDecoration(color: HalalEtTheme.divider, borderRadius: BorderRadius.circular(2))),
+                  decoration: BoxDecoration(color: const Color(0xFF2D5A3D), borderRadius: BorderRadius.circular(2))),
             ),
+          if (isDialog)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Deposit ETB',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white54),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            )
+          else ...[
             const SizedBox(height: 20),
             const Text('Deposit ETB',
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
-            const SizedBox(height: 4),
-            const Text('ገንዘብ አስገባ • Funds via secure channel (no interest)',
-                style: TextStyle(fontSize: 13, color: HalalEtTheme.textSecondary)),
-            const SizedBox(height: 20),
-            TextField(
-              controller: controller,
-              keyboardType: TextInputType.number,
-              autofocus: true,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white),
-              decoration: const InputDecoration(
-                prefixText: 'ETB  ',
-                prefixStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: HalalEtTheme.textSecondary),
-                hintText: '0.00',
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                final amount = double.tryParse(controller.text);
-                if (amount != null && amount > 0) {
-                  Navigator.pop(ctx);
-                  final result = await context.read<AppProvider>().deposit(amount);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(result['message'] ?? 'Deposit complete'),
-                        backgroundColor: HalalEtTheme.positive,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: Text(AppLocalizations.of(ctx).deposit),
-            ),
           ],
-        ),
+          const SizedBox(height: 4),
+          const Text('ገንዘብ አስገባ • Funds via secure channel (no interest)',
+              style: TextStyle(fontSize: 13, color: Color(0xFF8BAF97))),
+          const SizedBox(height: 20),
+          TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Colors.white),
+            decoration: const InputDecoration(
+              prefixText: 'ETB  ',
+              prefixStyle: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: Color(0xFF8BAF97)),
+              hintText: '0.00',
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              final amount = double.tryParse(controller.text);
+              if (amount != null && amount > 0) {
+                Navigator.pop(ctx);
+                final result = await context.read<AppProvider>().deposit(amount);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(result['message'] ?? 'Deposit complete'),
+                      backgroundColor: const Color(0xFF2E7D52),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  );
+                }
+              }
+            },
+            child: Text(AppLocalizations.of(ctx).deposit),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
 void _showWithdrawSheet(BuildContext context) {
   final amountCtrl = TextEditingController();
@@ -1531,14 +1575,10 @@ void _showWithdrawSheet(BuildContext context) {
     context.read<AppProvider>().loadPaymentMethods();
   }
 
-  showModalBottomSheet(
+  showResponsiveSheet<void>(
     context: context,
-    backgroundColor: HalalEtTheme.cardBg,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-    ),
-    builder: (ctx) => StatefulBuilder(
+    backgroundColor: const Color(0xFF1A3D2B),
+    builder: (ctx, isDialog) => StatefulBuilder(
       builder: (ctx, setSheetState) {
         final provider = ctx.read<AppProvider>();
         final methods = provider.paymentMethods;
@@ -1553,17 +1593,29 @@ void _showWithdrawSheet(BuildContext context) {
         }
 
         return Padding(
-          padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
+          padding: EdgeInsets.fromLTRB(24, isDialog ? 20 : 24, 24,
+              isDialog ? 24 : MediaQuery.of(ctx).viewInsets.bottom + 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Center(child: Container(width: 40, height: 4,
-                  decoration: BoxDecoration(color: HalalEtTheme.divider,
-                      borderRadius: BorderRadius.circular(2)))),
-              const SizedBox(height: 20),
-              Text(l.withdrawEtb,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+              if (!isDialog)
+                Center(child: Container(width: 40, height: 4,
+                    decoration: BoxDecoration(color: const Color(0xFF2D5A3D),
+                        borderRadius: BorderRadius.circular(2)))),
+              if (isDialog)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(l.withdrawEtb, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+                    IconButton(icon: const Icon(Icons.close, color: Colors.white54), onPressed: () => Navigator.pop(ctx)),
+                  ],
+                )
+              else ...[
+                const SizedBox(height: 20),
+                Text(l.withdrawEtb,
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+              ],
               const SizedBox(height: 4),
               const Text('Riba-free withdrawal to your saved bank account',
                   style: TextStyle(fontSize: 13, color: HalalEtTheme.textSecondary)),

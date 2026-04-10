@@ -15,27 +15,33 @@ class OrdersScreen extends StatefulWidget {
 
   static void showOrderActions(BuildContext context, Order order) {
     if (!order.isPending) return;
-    showModalBottomSheet(
+    showResponsiveSheet<void>(
       context: context,
       backgroundColor: HalalEtTheme.cardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Padding(
+      builder: (ctx, isDialog) => Padding(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(
-              child: Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(
-                  color: HalalEtTheme.divider,
-                  borderRadius: BorderRadius.circular(2),
+            if (!isDialog)
+              Center(
+                child: Container(
+                  width: 40, height: 4,
+                  decoration: BoxDecoration(
+                    color: HalalEtTheme.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            ),
+            if (isDialog)
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white54),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ),
             const SizedBox(height: 16),
             Row(
               children: [

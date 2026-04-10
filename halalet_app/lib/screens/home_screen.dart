@@ -66,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AppProvider>().loadAllData();
+      context.read<AppProvider>().setGlobalNav((i) => setState(() => _currentIndex = i));
     });
   }
 
@@ -207,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Row(
         children: [
           // Sidebar
-          _WebSidebar(
+          AppWebSidebar(
             currentIndex: _currentIndex,
             onTap: (i) => setState(() => _currentIndex = i),
             onLogout: () async {
@@ -244,12 +245,12 @@ class _MoreItem {
   const _MoreItem(this.icon, this.label, this.index);
 }
 
-class _WebSidebar extends StatelessWidget {
+class AppWebSidebar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final VoidCallback onLogout;
 
-  const _WebSidebar({
+  const AppWebSidebar({
     required this.currentIndex,
     required this.onTap,
     required this.onLogout,

@@ -99,6 +99,11 @@ class AppProvider extends ChangeNotifier {
     return (cash - reservedForOrders).clamp(0.0, double.infinity);
   }
 
+  // Global navigation callback (set by HomeScreen, used by detail screens)
+  Function(int)? _globalNavCallback;
+  void setGlobalNav(Function(int)? fn) { _globalNavCallback = fn; }
+  void navigateGlobal(int index) { _globalNavCallback?.call(index); }
+
   bool get assetsLoading => _assetsLoading;
   String? get assetsError => _assetsError;
   bool get portfolioLoading => _portfolioLoading;

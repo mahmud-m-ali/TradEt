@@ -668,30 +668,42 @@ class PortfolioScreen extends StatelessWidget {
 
   void _showDepositSheet(BuildContext context) {
     final controller = TextEditingController();
-    showModalBottomSheet(
+    showResponsiveSheet(
       context: context,
-      backgroundColor: HalalEtTheme.cardBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.fromLTRB(
-            24, 24, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
+      backgroundColor: const Color(0xFF1A3D2B),
+      builder: (ctx, isDialog) => Padding(
+        padding: EdgeInsets.fromLTRB(24, isDialog ? 20 : 24, 24,
+            isDialog ? 24 : MediaQuery.of(ctx).viewInsets.bottom + 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Center(
-              child: Container(
-                width: 40, height: 4,
-                decoration: BoxDecoration(
-                    color: HalalEtTheme.divider,
-                    borderRadius: BorderRadius.circular(2)),
+            if (!isDialog)
+              Center(
+                child: Container(
+                  width: 40, height: 4,
+                  decoration: BoxDecoration(
+                      color: const Color(0xFF2D5A3D),
+                      borderRadius: BorderRadius.circular(2)),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text('Deposit ETB',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+            if (isDialog)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text('Deposit ETB',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white54),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              )
+            else ...[
+              const SizedBox(height: 20),
+              const Text('Deposit ETB',
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+            ],
             const SizedBox(height: 4),
             const Text('ገንዘብ አስገባ • Funds via secure channel (no interest)',
                 style: TextStyle(fontSize: 13, color: HalalEtTheme.textSecondary)),
@@ -771,32 +783,43 @@ class PortfolioScreen extends StatelessWidget {
     final accountCtrl = TextEditingController();
     String? selectedBank;
 
-    showModalBottomSheet(
+    showResponsiveSheet<void>(
       context: context,
-      backgroundColor: HalalEtTheme.cardBg,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => StatefulBuilder(
+      backgroundColor: const Color(0xFF1A3D2B),
+      builder: (ctx, isDialog) => StatefulBuilder(
         builder: (ctx, setSheetState) => Padding(
-          padding: EdgeInsets.fromLTRB(
-              24, 24, 24, MediaQuery.of(ctx).viewInsets.bottom + 24),
+          padding: EdgeInsets.fromLTRB(24, isDialog ? 20 : 24, 24,
+              isDialog ? 24 : MediaQuery.of(ctx).viewInsets.bottom + 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Center(
-                child: Container(
-                  width: 40, height: 4,
-                  decoration: BoxDecoration(
-                      color: HalalEtTheme.divider,
-                      borderRadius: BorderRadius.circular(2)),
+              if (!isDialog)
+                Center(
+                  child: Container(
+                    width: 40, height: 4,
+                    decoration: BoxDecoration(
+                        color: const Color(0xFF2D5A3D),
+                        borderRadius: BorderRadius.circular(2)),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              const Text('Withdraw ETB',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+              if (isDialog)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Withdraw ETB',
+                        style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white54),
+                      onPressed: () => Navigator.pop(ctx),
+                    ),
+                  ],
+                )
+              else ...[
+                const SizedBox(height: 20),
+                const Text('Withdraw ETB',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+              ],
               const SizedBox(height: 4),
               const Text('ገንዘብ አውጣ • Withdraw to your bank account (Riba-free)',
                   style: TextStyle(fontSize: 13, color: HalalEtTheme.textSecondary)),
