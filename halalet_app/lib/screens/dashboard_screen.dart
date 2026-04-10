@@ -122,26 +122,29 @@ class DashboardScreen extends StatelessWidget {
 
         // Portfolio card + Stats in a row on desktop
         if (desktop)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _PortfolioCard(provider: provider, fmt: fmt),
-                    const SizedBox(height: 14),
-                    _AllocationCard(provider: provider, fmt: fmt),
-                  ],
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _PortfolioCard(provider: provider, fmt: fmt),
+                      const SizedBox(height: 14),
+                      _AllocationCard(provider: provider, fmt: fmt),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                flex: 4,
-                child: _webStatsGrid(context, provider, fmt, onNavigateTo),
-              ),
-            ],
+                const SizedBox(width: 20),
+                Expanded(
+                  flex: 4,
+                  child: _webStatsGrid(context, provider, fmt, onNavigateTo),
+                ),
+              ],
+            ),
           )
         else ...[
           _PortfolioCard(provider: provider, fmt: fmt),
@@ -273,7 +276,7 @@ class DashboardScreen extends StatelessWidget {
     final l = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         _CashBalanceCard(
           value: '${fmt.format(provider.availableCashBalance)} ETB',

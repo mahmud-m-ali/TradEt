@@ -108,23 +108,26 @@ class PortfolioScreen extends StatelessWidget {
 
                   // Balance card
                   if (desktop)
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(flex: 3, child: _balanceCard(context, summary, fmt)),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              _quickStats(summary, fmt),
-                              const SizedBox(height: 14),
-                              _returnRateCard(summary, fmt),
-                            ],
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(flex: 3, child: _balanceCard(context, summary, fmt)),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            flex: 2,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _quickStats(summary, fmt),
+                                const SizedBox(height: 14),
+                                _returnRateCard(summary, fmt),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     )
                   else
                     _balanceCard(context, summary, fmt),
@@ -235,6 +238,7 @@ class PortfolioScreen extends StatelessWidget {
               ],
             ),
           ),
+          const Spacer(),
           const SizedBox(height: 16),
           Row(
             children: [
