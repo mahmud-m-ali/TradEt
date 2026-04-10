@@ -100,11 +100,19 @@ class DashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(child: _greeting(provider, l)),
-            IconButton(
-              onPressed: () => provider.loadAllData(),
-              icon: const Icon(Icons.refresh_rounded, color: HalalEtTheme.textSecondary),
-              tooltip: l.refreshAllData,
-            ),
+            provider.isLoading
+              ? const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: SizedBox(
+                    width: 20, height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: HalalEtTheme.textSecondary),
+                  ),
+                )
+              : IconButton(
+                  onPressed: () => provider.loadAllData(),
+                  icon: const Icon(Icons.refresh_rounded, color: HalalEtTheme.textSecondary),
+                  tooltip: l.refreshAllData,
+                ),
           ],
         ),
         const SizedBox(height: 16),
@@ -119,7 +127,14 @@ class DashboardScreen extends StatelessWidget {
             children: [
               Expanded(
                 flex: 3,
-                child: _PortfolioCard(provider: provider, fmt: fmt),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _PortfolioCard(provider: provider, fmt: fmt),
+                    const SizedBox(height: 14),
+                    _AllocationCard(provider: provider, fmt: fmt),
+                  ],
+                ),
               ),
               const SizedBox(width: 20),
               Expanded(
@@ -815,6 +830,78 @@ class _CashBalanceCard extends StatelessWidget {
               ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AllocationCard extends StatelessWidget {
+  final AppProvider provider;
+  final NumberFormat fmt;
+
+  const _AllocationCard({required this.provider, required this.fmt});
+
+  Widget _bar(String label, double pct, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: const TextStyle(fontSize: 11, color: HalalEtTheme.textMuted)),
+            Text('${(pct * 100).toStringAsFixed(1)}%',
+                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color)),
+          ],
+        ),
+        const SizedBox(height: 4),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: LinearProgressIndicator(
+            value: pct.clamp(0.0, 1.0),
+            minHeight: 7,
+            backgroundColor: color.withValues(alpha: 0.15),
+            valueColor: AlwaysStoppedAnimation<Color>(color),
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final summary = provider.portfolioSummary;
+    final total = summary?.totalPortfolioValue ?? 0;
+    final holdings = summary?.totalHoldingsValue ?? 0;
+    final cash = summary?.cashBalance ?? 0;
+    final holdingsPct = total > 0 ? holdings / total : 0.0;
+    final cashPct = total > 0 ? cash / total : 0.0;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: HalalEtTheme.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: HalalEtTheme.divider.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.donut_small_outlined, size: 15, color: HalalEtTheme.textSecondary),
+              const SizedBox(width: 6),
+              const Text('Portfolio Split',
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: HalalEtTheme.textSecondary)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _bar('Holdings', holdingsPct, const Color(0xFF818CF8)),
+          const SizedBox(height: 10),
+          _bar('Cash', cashPct, HalalEtTheme.accent),
         ],
       ),
     );

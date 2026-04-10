@@ -93,8 +93,12 @@ class PortfolioScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(color: HalalEtTheme.divider),
                             ),
-                            child: const Icon(Icons.refresh_rounded,
-                                size: 20, color: HalalEtTheme.textSecondary),
+                            child: provider.isLoading
+                                ? const SizedBox(
+                                    width: 20, height: 20,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: HalalEtTheme.textSecondary))
+                                : const Icon(Icons.refresh_rounded,
+                                    size: 20, color: HalalEtTheme.textSecondary),
                           ),
                         ),
                       ),
@@ -111,7 +115,14 @@ class PortfolioScreen extends StatelessWidget {
                         const SizedBox(width: 20),
                         Expanded(
                           flex: 2,
-                          child: _quickStats(summary, fmt),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _quickStats(summary, fmt),
+                              const SizedBox(height: 14),
+                              _returnRateCard(summary, fmt),
+                            ],
+                          ),
                         ),
                       ],
                     )
@@ -317,6 +328,80 @@ class PortfolioScreen extends StatelessWidget {
             'Return',
             '${(summary?.totalPnl ?? 0) >= 0 ? '+' : ''}${fmt.format(summary?.totalPnl ?? 0)} ETB',
             color: (summary?.totalPnl ?? 0) >= 0 ? HalalEtTheme.positive : HalalEtTheme.negative,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _returnRateCard(dynamic summary, NumberFormat fmt) {
+    final invested = summary?.totalInvested ?? 0;
+    final pnl = summary?.totalPnl ?? 0;
+    final pnlPct = invested > 0 ? (pnl / invested * 100) : 0.0;
+    final isPositive = pnl >= 0;
+    final color = isPositive ? HalalEtTheme.positive : HalalEtTheme.negative;
+    final barValue = (pnlPct.abs() / 50).clamp(0.0, 1.0);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: HalalEtTheme.cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: HalalEtTheme.divider.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Return Rate',
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: HalalEtTheme.textSecondary)),
+          const SizedBox(height: 8),
+          Text(
+            '${isPositive ? "+" : ""}${pnlPct.toStringAsFixed(2)}%',
+            style: TextStyle(
+                fontSize: 28, fontWeight: FontWeight.w800, color: color),
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              value: barValue,
+              minHeight: 7,
+              backgroundColor: color.withValues(alpha: 0.15),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Invested',
+                      style: TextStyle(fontSize: 10, color: HalalEtTheme.textMuted)),
+                  Text('${fmt.format(invested)} ETB',
+                      style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white)),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text('Return',
+                      style: TextStyle(fontSize: 10, color: HalalEtTheme.textMuted)),
+                  Text(
+                    '${isPositive ? "+" : ""}${fmt.format(pnl)} ETB',
+                    style: TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w600, color: color),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
